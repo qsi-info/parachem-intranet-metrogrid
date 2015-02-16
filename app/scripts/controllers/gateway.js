@@ -10,13 +10,11 @@
 
 angular.module('AngularSharePointApp').controller('GatewayCtrl', ['SharePoint', '$rootScope', '$location', function (SharePoint, $rootScope, $location) {
 
-	if (typeof $rootScope.me === 'undefined') {
+	if (!$rootScope.isInitlialize) {
 
 		SharePoint.init($rootScope.sp.host, $rootScope.sp.app, $rootScope.sp.sender).then(function () {
-			SharePoint.API.me().then(function (user) {
-				$rootScope.me = user;
-				$location.path('/home');
-			});			
+			$rootScope.isInitlialize = true;
+			$location.path('/home');
 		});
 
 	} else {

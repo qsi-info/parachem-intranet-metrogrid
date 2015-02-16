@@ -1,0 +1,40 @@
+.metro .tile .tile-content.icon [class*="fa-"], .metro .tile .tile-content.icon img {
+  color: #ffffff;
+  font-size: 50px;
+  height: 56px;
+  left: 50%;
+  line-height: 48px;
+  margin-left: -28px;
+  margin-top: -28px;
+  position: absolute;
+  text-align: center;
+  top: 50%;
+  width: 56px;
+  font-family: 'FontAwesome';
+}
+
+.metro .tile:hover .tile-content.icon i {
+  color: turquoise !important;
+}
+
+.metro .tile {
+  height: 140px !important;
+  width: 140px !important;
+  margin: 15px;
+  /*background-color: black !important;*/
+}
+
+body {
+  padding: 2px !important;
+}
+
+
+.metro .badge {
+  bottom: 110px !important;
+  width: 35px !important;
+}
+
+.tile .name {
+  font-size: 9pt !important;
+  margin: 9px 20px 2px 5px !important;
+}

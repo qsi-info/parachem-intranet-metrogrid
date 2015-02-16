@@ -9,6 +9,8 @@
  * Main module of the application.
  */
 
+ /*jshint loopfunc: true */
+
 
 function parseQueryString() {
   var query = (window.location.search || '?').substr(1);
@@ -23,10 +25,10 @@ function parseQueryString() {
 
 angular
   .module('AngularSharePointApp', [
-    'ngCookies',
-    'ngResource',
+    // 'ngResource',
     'ngRoute',
     'cfp.loadingBar',
+    'ipCookie'
   ])
 
   .config(['$routeProvider', function ($routeProvider) {
@@ -75,8 +77,78 @@ angular
       app: app, 
       sender: sender,
       isWebPart: isWebPart,
+      _params: params,
     };
 
+    $rootScope.isInitialize = false;
+
+
+  }])
+
+
+  .factory('SPMenuGridList', ['SharePoint', function (SharePoint) {
+    return new SharePoint.API.List('SPMenuGridList');
+  }])
+
+
+  .factory('MetroTileMenu', ['SharePoint', 'SPMenuGridList', '$q', 'ipCookie', '$rootScope',  function (SharePoint, SPMenuGridList, $q, ipCookie, $rootScope) {
+
+    var factory = {};
+
+    // var groupCaching;
+
+    factory.fetch = function () {
+      var deferred = $q.defer();
+
+      // Eventually check cache 
+
+      var referenceMenu = $rootScope.sp._params.ReferenceMenu || 'Home';
+
+      // Get currentUser groups
+      SharePoint.API.groups().then(function (groups) {
+        // Creates the odata filter for the groups
+        var filter = '$filter=' + SharePoint.OData().groupFilter(groups) + ' and (ReferenceMenu eq \'' + referenceMenu + '\')';  
+        var select = '$select=Title,Target,FontAwesomeIcon,Color,Href,NotificationList';
+        var orderBy = '$orderby=Order';
+        var query = [filter,select,orderBy].join('&');
+        // Get the MenuGrid items related with the groups
+        SPMenuGridList.find(query).then(function (items) {
+          _setup_notifications(items).then(function (items) {
+            deferred.resolve(items);
+          });
+        });
+      });
+      return deferred.promise;
+    };
+
+
+    function _setup_notifications (items) {
+      var promises = [];
+      items.forEach(function (item) {
+        var deferred = $q.defer();
+        if (item.NotificationList) {
+          var list = new SharePoint.API.List(item.NotificationList);
+          list.count().then(function (result) {
+            if (result.ItemCount) {
+              var cookieCount = ipCookie(window.encodeURIComponent(item.NotificationList)) || 0;
+              if (cookieCount < result.ItemCount) {
+                item.ItemCount = result.ItemCount - cookieCount;
+                if (item.ItemCount > 99) {
+                  item.ItemCount = '+99';
+                }
+              }
+            }
+            deferred.resolve(item);
+          });
+        } else {
+          deferred.resolve(item);
+        }
+        promises.push(deferred.promise);
+      });
+      return $q.all(promises);
+    }
+
+    return factory;
 
   }]);
 
