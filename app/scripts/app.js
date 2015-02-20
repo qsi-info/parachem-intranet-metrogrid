@@ -72,6 +72,7 @@ angular
       isWebPart = false;
     }
 
+
     $rootScope.sp = {
       host: host,
       app: app, 
@@ -133,10 +134,8 @@ angular
               var cookieCount = ipCookie(window.encodeURIComponent(item.NotificationList)) || 0;
               if (cookieCount < result.ItemCount) {
                 item.ItemCount = result.ItemCount - cookieCount;
-                if (item.ItemCount > 99) {
-                  item.ItemCount = '+99';
-                }
               }
+              item.ListCount = result.ItemCount;
             }
             deferred.resolve(item);
           });

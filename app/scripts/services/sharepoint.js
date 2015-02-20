@@ -91,6 +91,7 @@ angular.module('AngularSharePointApp').factory('SharePoint', ['$q', function ($q
 
   function _List (listTitle) {
 
+    listTitle = window.encodeURIComponent(listTitle).replace(/\'/g, '%27%27');
 
     this.info = function () {
       var deferred = $q.defer();

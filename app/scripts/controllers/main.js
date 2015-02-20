@@ -24,8 +24,8 @@ angular.module('AngularSharePointApp').controller('MainCtrl', ['$scope', 'MetroT
 	$scope.clickTitle = function (idx) {
 		var clickedItem = $scope.items[idx];
 
-		if (clickedItem.ItemCount && clickedItem.NotificationList) {
-			ipCookie(clickedItem.NotificationList, clickedItem.ItemCount, { expires: 365 });
+		if (clickedItem.ListCount && clickedItem.NotificationList) {
+			ipCookie(clickedItem.NotificationList, clickedItem.ListCount, { expires: 365 });
 		}
 
 		switch(clickedItem.Target) {
